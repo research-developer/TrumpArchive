@@ -1,0 +1,58 @@
+[
+  {
+    "channel_name": "Donald J Trump (Official)",
+    "url": "https://www.youtube.com/channel/UCAql2DyGU2un1Ei2nMYsqOA",
+    "commentary_level": "none",
+    "update_frequency": "daily",
+    "video_types": ["speeches", "rallies", "policy_announcements"],
+    "selectivity": 0.9
+  },
+  {
+    "channel_name": "The White House (Official)",
+    "url": "https://www.youtube.com/user/whitehouse",
+    "commentary_level": "none",
+    "update_frequency": "weekly",
+    "video_types": ["press_conferences", "bilateral_meetings", "ceremonial_addresses"],
+    "selectivity": 0.85
+  },
+  {
+    "channel_name": "C-SPAN",
+    "url": "https://www.youtube.com/user/CSPAN",
+    "commentary_level": "none",
+    "update_frequency": "real-time",
+    "video_types": ["congressional_addresses", "press_conferences", "public_events"],
+    "selectivity": 0.1
+  },
+  {
+    "channel_name": "Right Side Broadcasting Network (RSBN)",
+    "url": "https://www.youtube.com/@RSBN",
+    "commentary_level": "none",
+    "update_frequency": "per-event",
+    "video_types": ["rallies", "campaign_speeches", "live_streams"],
+    "selectivity": 0.8
+  },
+  {
+    "channel_name": "NBC News",
+    "url": "https://www.youtube.com/user/NBCNews",
+    "commentary_level": "minimal_intro/outro",
+    "update_frequency": "weekly",
+    "video_types": ["interviews", "congressional_speeches", "policy_addresses"],
+    "selectivity": 0.4
+  },
+  {
+    "channel_name": "FOX 5 Networks",
+    "url": "https://www.youtube.com/user/fox5ny",
+    "commentary_level": "minimal_intro/outro",
+    "update_frequency": "weekly",
+    "video_types": ["rallies", "party_events", "speeches"],
+    "selectivity": 0.6
+  },
+  {
+    "channel_name": "The Wall Street Journal",
+    "url": "https://www.youtube.com/user/WSJDigitalNetwork",
+    "commentary_level": "none",
+    "update_frequency": "monthly",
+    "video_types": ["congressional_addresses", "policy_speeches"],
+    "selectivity": 0.3
+  }
+]
