@@ -49,4 +49,7 @@ appmap.log
 ehthumbs.db
 Thumbs.db
 data/*
+
+# Test fixtures
+tests/fixtures/vcr_cassettes/
 .mcp.json

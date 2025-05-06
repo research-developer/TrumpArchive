@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      content-length:
+      - '0'
+      user-agent:
+      - (gzip)
+      x-goog-api-client:
+      - gdcl/2.169.0 gl-python/3.11.12
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&id=FoxNews&key=AIzaSyBH6-OP1Sku-VVZjNx1S5QP1pWZcPGyovA&alt=json
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/6vmUlBQys7MS1GyUlCqzC8tKU1KVU7OSMzLS83xySwuCUotLsjPK05V0gEpTC1J
+        TAcpDCotjagK8Swy8M93KfQ0CTYICjXLM3Er9Hb1hSgsSExP9cxLywcqrgbygSIl+SWJOUDTSnNK
+        ioGiBjoQ4SKISEBqUQBQC1DCFChey1XLBQDqWdLMmQAAAA==
+    headers:
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Tue, 06 May 2025 18:59:55 GMT
+      Server:
+      - scaffolding on HTTPServer2
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      - X-Origin
+      - Referer
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-XSS-Protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+version: 1
