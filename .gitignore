@@ -28,6 +28,7 @@ var/
 # Virtual Environment
 venv/
 ENV/
+.conda/
 
 # Environment variables
 .env
@@ -37,6 +38,7 @@ ENV/
 .vscode/
 *.swp
 *.swo
+appmap.log 
 
 # OS specific files
 .DS_Store
