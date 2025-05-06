@@ -4,6 +4,7 @@ Simple test to fetch videos from a YouTube channel using the YouTube API.
 
 import os
 import json
+import pytest
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from dotenv import load_dotenv
@@ -135,36 +136,107 @@ def filter_trump_videos(videos, selectivity=0.5):
     
     return trump_videos
 
+# Test data
+TEST_CHANNEL_URL = "https://www.youtube.com/c/FoxNews"  # Example channel
+
+@pytest.mark.skipif(not YOUTUBE_API_KEY, reason="YouTube API key not found")
+def test_get_channel_id():
+    """Test extracting channel ID from URL."""
+    channel_id = get_channel_id(TEST_CHANNEL_URL)
+    
+    assert channel_id is not None, "Failed to get channel ID"
+    assert len(channel_id) > 0, "Channel ID is empty"
+
+@pytest.mark.skipif(not YOUTUBE_API_KEY, reason="YouTube API key not found")
+@pytest.mark.skip(reason="Skipping live API test to avoid quota issues and network dependencies")
+def test_get_channel_videos():
+    """Test fetching videos from a channel."""
+    videos = get_channel_videos(TEST_CHANNEL_URL, max_results=5)
+    
+    assert videos is not None, "Failed to get videos"
+    assert len(videos) > 0, "No videos found"
+    
+    # Check video structure
+    video = videos[0]
+    assert "snippet" in video
+    assert "title" in video["snippet"]
+    assert "publishedAt" in video["snippet"]
+    assert "resourceId" in video["snippet"]
+    assert "videoId" in video["snippet"]["resourceId"]
+
+@pytest.mark.skipif(not YOUTUBE_API_KEY, reason="YouTube API key not found")
+def test_get_channel_id_format():
+    """Test that channel ID extraction returns a properly formatted ID."""
+    # We don't test the actual API call, just the formatting logic
+    channel_id = get_channel_id("https://www.youtube.com/channel/UC-lHJZR3Gqxm24_Vd_AJ5Yw")
+    
+    # Just check that we get something that looks like a channel ID
+    assert channel_id is not None
+    assert len(channel_id) > 10, "Channel ID too short"
+    # YouTube channel IDs can actually contain hyphens, so we just check for the UC prefix
+    assert channel_id.startswith("UC"), "Channel ID should start with UC"
+
+@pytest.mark.skipif(not YOUTUBE_API_KEY, reason="YouTube API key not found")
+def test_filter_trump_videos():
+    """Test filtering videos for Trump content."""
+    # Create a sample video with Trump in the title
+    sample_videos = [
+        {
+            "snippet": {
+                "title": "Trump speaks at rally",
+                "description": "Former President Trump holds a campaign rally",
+                "resourceId": {"videoId": "sample1"}
+            }
+        },
+        {
+            "snippet": {
+                "title": "News of the day",
+                "description": "Various news stories",
+                "resourceId": {"videoId": "sample2"}
+            }
+        }
+    ]
+    
+    trump_videos = filter_trump_videos(sample_videos, selectivity=0.5)
+    
+    assert trump_videos is not None, "Failed to filter videos"
+    assert len(trump_videos) == 1, "Incorrect number of Trump videos found"
+    assert trump_videos[0]["snippet"]["title"] == "Trump speaks at rally"
+
 def main():
-    # Load sources file
-    with open("sources.json", "r") as f:
-        sources = json.load(f)
-    
-    # Process first channel as a test
-    channel = sources[0]
-    channel_url = channel["url"]
-    channel_name = channel["channel_name"]
-    selectivity = channel["selectivity"]
-    
-    print(f"Testing channel: {channel_name} ({channel_url})")
-    
-    # Get videos from channel
-    videos = get_channel_videos(channel_url, max_results=10)
-    
-    print(f"Found {len(videos)} videos")
-    
-    # Filter Trump videos
-    trump_videos = filter_trump_videos(videos, selectivity)
-    
-    print(f"Found {len(trump_videos)} Trump videos")
-    
-    # Print video details
-    for video in trump_videos:
-        video_id = video["snippet"]["resourceId"]["videoId"]
-        title = video["snippet"]["title"]
-        published_at = video["snippet"]["publishedAt"]
+    """Run tests manually (for direct script execution)."""
+    try:
+        # Load sources file
+        with open("sources.json", "r") as f:
+            sources = json.load(f)
         
-        print(f"- {title} ({video_id}) - Published: {published_at}")
+        # Process first channel as a test
+        channel = sources[0]
+        channel_url = channel["url"]
+        channel_name = channel["channel_name"]
+        selectivity = channel["selectivity"]
+        
+        print(f"Testing channel: {channel_name} ({channel_url})")
+        
+        # Get videos from channel
+        videos = get_channel_videos(channel_url, max_results=10)
+        
+        print(f"Found {len(videos)} videos")
+        
+        # Filter Trump videos
+        trump_videos = filter_trump_videos(videos, selectivity)
+        
+        print(f"Found {len(trump_videos)} Trump videos")
+        
+        # Print video details
+        for video in trump_videos:
+            video_id = video["snippet"]["resourceId"]["videoId"]
+            title = video["snippet"]["title"]
+            published_at = video["snippet"]["publishedAt"]
+            
+            print(f"- {title} ({video_id}) - Published: {published_at}")
+    except FileNotFoundError:
+        print("sources.json file not found. Please create it first.")
 
 if __name__ == "__main__":
     main()

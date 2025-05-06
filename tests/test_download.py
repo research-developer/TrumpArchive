@@ -4,6 +4,7 @@ Test downloading a video and its transcript using yt-dlp.
 
 import os
 import json
+import pytest
 import subprocess
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
@@ -112,9 +113,40 @@ def download_audio(video_id):
         print(f"Error downloading audio: {e}")
         return None
 
+# Test video ID
+TEST_VIDEO_ID = "5XSUTAIuApI"  # Trump's University of Alabama speech
+
+@pytest.mark.skipif(not YOUTUBE_API_KEY, reason="YouTube API key not found")
+def test_get_video_details():
+    """Test fetching video details from YouTube API."""
+    video_details = get_video_details(TEST_VIDEO_ID)
+    
+    assert video_details is not None, "Failed to get video details"
+    assert video_details["video_id"] == TEST_VIDEO_ID
+    assert "title" in video_details
+    assert "channel_title" in video_details
+    assert "publish_date" in video_details
+    assert "views" in video_details
+    assert "duration_seconds" in video_details
+    assert video_details["duration_seconds"] > 0
+
+@pytest.mark.skipif(not YOUTUBE_API_KEY, reason="YouTube API key not found")
+@pytest.mark.skip(reason="Skipping download test to avoid actual downloads during testing")
+def test_download_audio():
+    """Test downloading audio from a YouTube video."""
+    audio_file = download_audio(TEST_VIDEO_ID)
+    
+    assert audio_file is not None, "Failed to download audio"
+    assert os.path.exists(audio_file), "Audio file does not exist"
+    
+    # Check file size
+    file_size = os.path.getsize(audio_file) / (1024 * 1024)  # MB
+    assert file_size > 0, "Audio file is empty"
+
 def main():
+    """Run tests manually (for direct script execution)."""
     # Try the University of Alabama speech that was successfully transcribed earlier
-    video_id = "5XSUTAIuApI"  # Trump's University of Alabama speech
+    video_id = TEST_VIDEO_ID
     
     # Get video details
     video_details = get_video_details(video_id)

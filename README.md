@@ -44,23 +44,26 @@ The Trump Archive project is designed to:
 ### Installation
 
 1. Clone this repository
+
 ```bash
 git clone https://github.com/yourusername/trump-archive.git
 cd trump-archive
 ```
 
-2. Install dependencies
+1. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Create `.env` file with required API keys
-```
+1. Create `.env` file with required API keys
+
+```env
 YOUTUBE_API_KEY=your_youtube_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-4. Configure channels to monitor in `sources.json`
+1. Configure channels to monitor in `sources.json`
 
 ### Running the System
 
@@ -132,6 +135,7 @@ python -m uvicorn api:app --reload
 ## Project Roadmap
 
 ### Phase 1: Core Implementation (Completed)
+
 - YouTube API integration ✓
 - Video downloading system ✓
 - Transcript processing ✓
@@ -140,18 +144,21 @@ python -m uvicorn api:app --reload
 - UI mockup ✓
 
 ### Phase 2: Continuous Monitoring (Current)
+
 - WebSub notification system
 - Scheduled polling fallback
 - Processing queue integration
 - Quota management system
 
 ### Phase 3: Advanced Features (Upcoming)
+
 - User accounts for saving clips/comments
 - Timeline view of statements by topic
 - Advanced search capabilities
 - Mobile-optimized interface
 
 ### Phase 4: Public Release
+
 - Documentation and usage guides
 - API rate limiting and security
 - Account management

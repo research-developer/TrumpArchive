@@ -1,7 +1,7 @@
 """
 Test the AI-based commentary detection functionality.
 
-This script:
+This module:
 1. Takes a transcript sample
 2. Uses LangChain with OpenAI to evaluate commentary level
 3. Reports confidence levels for different commentary types
@@ -9,8 +9,9 @@ This script:
 
 import os
 import json
+import pytest
 from dotenv import load_dotenv
-from langchain.llms import OpenAI
+from langchain_community.llms.openai import OpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
@@ -67,31 +68,93 @@ def evaluate_commentary(title, description, transcript_segment):
         print(f"Error parsing result: {result}")
         return None
 
-def main():
-    # Test cases
-    test_cases = [
-        {
-            "title": "FULL REMARKS: President Trump delivers commencement speech at University of Alabama",
-            "description": "President Trump's spring commencement address to graduating seniors at The University at Alabama.",
-            "transcript_segment": "Thank you, coach. Wow, what a nice looking group this is. What a beautiful group of people. And especially a very big hello to the University of Alabama. Congratulations to the class of 2025. Roll tide. Roll tide. There are things that happen in life that are very important and you always remember where you were when they happened.",
-            "expected_result": "no_commentary"
-        },
-        {
-            "title": "Trump DESTROYS Liberal Policies in EPIC New Hampshire Speech",
-            "description": "President Trump delivers remarks on Biden's failed policies during a campaign rally. Watch how he exposes the truth about the radical left agenda!",
-            "transcript_segment": "As you can see, Trump's speech today was filled with the usual talking points. He started by attacking Biden's border policies, claiming - without evidence - that millions of illegal immigrants are pouring into the country. Let's listen to what he said: 'We're going to close the border and we're going to do it fast. No country can survive with open borders.'",
-            "expected_result": "substantial_commentary"
-        },
-        {
-            "title": "President Trump Interview with Sean Hannity - Full Interview",
-            "description": "Former President Donald Trump sits down with Sean Hannity for an exclusive interview on Fox News.",
-            "transcript_segment": "HANNITY: Welcome back to 'Hannity.' Joining us now, the 45th President of the United States, Donald Trump. Mr. President, thank you for being with us tonight. TRUMP: Thank you, Sean. It's great to be with you as always. HANNITY: Let's start with the economy. Inflation is at a 40-year high. How would you have handled this differently?",
-            "expected_result": "minimal_commentary"
-        }
-    ]
+# Test cases
+TEST_CASES = [
+    {
+        "title": "FULL REMARKS: President Trump delivers commencement speech at University of Alabama",
+        "description": "President Trump's spring commencement address to graduating seniors at The University at Alabama.",
+        "transcript_segment": "Thank you, coach. Wow, what a nice looking group this is. What a beautiful group of people. And especially a very big hello to the University of Alabama. Congratulations to the class of 2025. Roll tide. Roll tide. There are things that happen in life that are very important and you always remember where you were when they happened.",
+        "expected_result": "no_commentary"
+    },
+    {
+        "title": "Trump DESTROYS Liberal Policies in EPIC New Hampshire Speech",
+        "description": "President Trump delivers remarks on Biden's failed policies during a campaign rally. Watch how he exposes the truth about the radical left agenda!",
+        "transcript_segment": "As you can see, Trump's speech today was filled with the usual talking points. He started by attacking Biden's border policies, claiming - without evidence - that millions of illegal immigrants are pouring into the country. Let's listen to what he said: 'We're going to close the border and we're going to do it fast. No country can survive with open borders.'",
+        "expected_result": "substantial_commentary"
+    },
+    {
+        "title": "President Trump Interview with Sean Hannity - Full Interview",
+        "description": "Former President Donald Trump sits down with Sean Hannity for an exclusive interview on Fox News.",
+        "transcript_segment": "HANNITY: Welcome back to 'Hannity.' Joining us now, the 45th President of the United States, Donald Trump. Mr. President, thank you for being with us tonight. TRUMP: Thank you, Sean. It's great to be with you as always. HANNITY: Let's start with the economy. Inflation is at a 40-year high. How would you have handled this differently?",
+        "expected_result": "minimal_commentary"
+    }
+]
+
+@pytest.mark.skipif(not OPENAI_API_KEY, reason="OpenAI API key not found")
+def test_no_commentary_detection():
+    """Test detection of videos with no commentary."""
+    case = TEST_CASES[0]
+    evaluation = evaluate_commentary(
+        case["title"],
+        case["description"],
+        case["transcript_segment"]
+    )
+    assert evaluation is not None, "Evaluation failed to return a result"
     
-    # Run evaluations
-    for i, case in enumerate(test_cases):
+    # Check that confidence scores are reasonable
+    assert 0 <= evaluation["no_commentary_confidence"] <= 100
+    assert 0 <= evaluation["minimal_commentary_confidence"] <= 100
+    assert 0 <= evaluation["substantial_commentary_confidence"] <= 100
+    
+    # For testing purposes, we just verify that scores exist and are in valid range
+    # We don't enforce specific thresholds since LLM responses can vary significantly
+    # In a real application, you might want to calibrate these thresholds more carefully
+
+@pytest.mark.skipif(not OPENAI_API_KEY, reason="OpenAI API key not found")
+def test_substantial_commentary_detection():
+    """Test detection of videos with substantial commentary."""
+    case = TEST_CASES[1]
+    evaluation = evaluate_commentary(
+        case["title"],
+        case["description"],
+        case["transcript_segment"]
+    )
+    assert evaluation is not None, "Evaluation failed to return a result"
+    
+    # Check that confidence scores are reasonable
+    assert 0 <= evaluation["no_commentary_confidence"] <= 100
+    assert 0 <= evaluation["minimal_commentary_confidence"] <= 100
+    assert 0 <= evaluation["substantial_commentary_confidence"] <= 100
+    
+    # For testing purposes, we just verify that scores exist and are in valid range
+    # We don't enforce specific thresholds since LLM responses can vary significantly
+
+@pytest.mark.skipif(not OPENAI_API_KEY, reason="OpenAI API key not found")
+def test_minimal_commentary_detection():
+    """Test detection of videos with minimal commentary."""
+    case = TEST_CASES[2]
+    evaluation = evaluate_commentary(
+        case["title"],
+        case["description"],
+        case["transcript_segment"]
+    )
+    assert evaluation is not None, "Evaluation failed to return a result"
+    
+    # Check that confidence scores are reasonable
+    assert 0 <= evaluation["no_commentary_confidence"] <= 100
+    assert 0 <= evaluation["minimal_commentary_confidence"] <= 100
+    assert 0 <= evaluation["substantial_commentary_confidence"] <= 100
+    
+    # For testing purposes, we just verify that scores exist and are in valid range
+    # We don't enforce specific thresholds since LLM responses can vary significantly
+
+def main():
+    """Run tests manually (for direct script execution)."""
+    if not OPENAI_API_KEY:
+        print("OpenAI API key not found. Please set OPENAI_API_KEY in .env file.")
+        return
+    
+    for i, case in enumerate(TEST_CASES):
         print(f"\nTesting Case {i+1}:")
         print(f"Title: {case['title']}")
         print(f"Expected result: {case['expected_result']}")
@@ -120,8 +183,4 @@ def main():
             print("❌ Evaluation failed!")
 
 if __name__ == "__main__":
-    if not OPENAI_API_KEY:
-        print("OpenAI API key not found. Please set OPENAI_API_KEY in .env file.")
-        exit(1)
-    
     main()

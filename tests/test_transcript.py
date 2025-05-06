@@ -1,7 +1,7 @@
 """
 Test processing a transcript.
 
-This script will:
+This module will:
 1. Use the pre-existing transcript fetched by the MCP YouTube transcript tool
 2. Structure it with timestamps and segments
 3. Save it in our desired format
@@ -11,6 +11,7 @@ import os
 import json
 import re
 import uuid
+import pytest
 from datetime import datetime
 
 # Create data directory if it doesn't exist
@@ -69,18 +70,48 @@ def process_transcript(video_id, transcript_text):
     
     return transcript_data
 
-def main():
-    # Use the Alabama speech transcript we fetched
-    video_id = "5XSUTAIuApI"
-    
-    # Sample transcript (just for demonstration)
-    # In a real implementation, this would be loaded from the MCP result
-    transcript_text = """# FULL REMARKS: President Trump delivers commencement speech at University of Alabama
+# Sample transcript for testing
+SAMPLE_TRANSCRIPT = """# FULL REMARKS: President Trump delivers commencement speech at University of Alabama
 
 [Music] Thank you, coach. Wow, what a nice looking group this is. What a beautiful group of people. And especially a very big hello to the University of Alabama. Congratulations to the class of 2025. Roll tide. Roll [Applause] tide. There are things that happen in life that are very important and you always remember where you were when they happened. As a student at Alabama, you'll always remember where you were when your head coach Nick Sabin retired. Remember that? Because he's done such a fantastic job. The last time I was here, and that's true with Nick. What a great coach. What a Let's bring him back. No, you have a good coach right now, though. I have a good coach right now. He was great. But the last time I was here, the Crimson Tide beat the Georgia Bulldogs [Music] 41-34. I was here. I got to watch it. That was some game. Today, it's my pleasure to return to this campus as the first president ever to deliver the keynote commencement address to this truly great American university. It's a great school and there's nowhere I'd rather be than right here in Tuscaloosa, Alabama. Title Town, USA. That's what it's become. And I love this place. Maybe it's because I won Alabama by 45 points. Could that be the reason? 45. You know, the way they say you like uh the polls have closed in Alabama. Trump has won Alabama immediately. It was very quick. It was very, very quick and nasty. That's what we like."""
+
+TEST_VIDEO_ID = "5XSUTAIuApI"
+
+def test_extract_segments_from_transcript():
+    """Test extracting segments from transcript text."""
+    segments = extract_segments_from_transcript(SAMPLE_TRANSCRIPT)
+    
+    assert segments is not None, "Failed to extract segments"
+    assert len(segments) > 0, "No segments extracted"
+    
+    # Check segment structure
+    segment = segments[0]
+    assert "id" in segment
+    assert "start" in segment
+    assert "end" in segment
+    assert "speaker" in segment
+    assert "text" in segment
+    assert segment["start"] >= 0
+    assert segment["end"] > segment["start"]
+
+def test_process_transcript():
+    """Test processing transcript into structured format."""
+    transcript_data = process_transcript(TEST_VIDEO_ID, SAMPLE_TRANSCRIPT)
+    
+    assert transcript_data is not None, "Failed to process transcript"
+    assert transcript_data["video_id"] == TEST_VIDEO_ID
+    assert "segments" in transcript_data
+    assert len(transcript_data["segments"]) > 0
+    assert "processed_at" in transcript_data
+    assert "metadata" in transcript_data
+
+def main():
+    """Run tests manually (for direct script execution)."""
+    # Use the Alabama speech transcript we fetched
+    video_id = TEST_VIDEO_ID
     
     # Process transcript
-    transcript_data = process_transcript(video_id, transcript_text)
+    transcript_data = process_transcript(video_id, SAMPLE_TRANSCRIPT)
     
     # Save to file
     output_file = f"{TRANSCRIPT_DIR}/{video_id}.json"
